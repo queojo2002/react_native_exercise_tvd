@@ -94,7 +94,7 @@ export default function RegisterScreen({ navigation }) {
         secureTextEntry
       />
 
-{error ? <Text>{error}</Text> : null}
+      {error ? <Text>{error}</Text> : null}
 
 
 

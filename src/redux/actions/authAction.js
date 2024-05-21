@@ -1,44 +1,54 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
-import { LOGIN_HANDLE_EVENT, LOGOUT_HANDLE_EVENT } from '.';
 import { loginUser, logoutUser } from '../../api/auth-api';
+
+
 
 
 export const login = ({ email, password }) => async (dispatch) => {
     try {
         const result = await loginUser({ email, password });
         if (result.user) {
-            await AsyncStorage.setItem('userData', JSON.stringify(result.user));
-            return { success: true, userData: result.user};
+            const userDoc = await firestore().collection('users').doc(email).get();
+            if (userDoc._exists) {
+                dispatch({
+                    type: 'LOGIN_SUCCESS',
+                    payload: userDoc._data,
+                });
+            } else {
+                dispatch({
+                    type: 'LOGIN_FAILURE',
+                    payload: "Không thể lấy dữ liệu người dùng",
+                });
+            }
+
         } else {
-            return { success: false, error: result.error };
+            dispatch({
+                type: 'LOGIN_FAILURE',
+                payload: result.error,
+            });
         }
     } catch (error) {
-        return { success: false, error: error.message };
+        dispatch({
+            type: 'LOGIN_FAILURE',
+            payload: error.message,
+        });
     }
 };
+
 
 export const logout = () => async (dispatch) => {
     try {
         await logoutUser();
-        await AsyncStorage.removeItem('userData');
-        dispatch({ type: LOGOUT_HANDLE_EVENT, userData: null });
-        return { success: true, userData: null };
+        dispatch({ type: 'LOGOUT' });
     } catch (error) {
-        return { success: false, error: error.message };
+        dispatch({
+            type: "LOGOUT_FAILURE", 
+            payload: "Có lỗi khi đăng xuất: " + error.message
+        })
     }
 };
 
+export const clearError = () => ({
+    type: 'CLEAR_ERROR',
+});
 
-
-export const loadUserFromStorage = () => async (dispatch) => {
-    try {
-        const userData = await AsyncStorage.getItem('userData');
-        if (userData) {
-            const userDoc = await firestore().collection('users').doc(JSON.parse(userData).email).get();
-            dispatch({ type: LOGIN_HANDLE_EVENT, userData: userDoc._data });
-        }
-    } catch (error) {
-        console.error('không thể load user từ storage:', error);
-    }
-};

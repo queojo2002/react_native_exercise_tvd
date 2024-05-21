@@ -9,41 +9,16 @@ import { logout } from '../../redux/actions/authAction';
 
 export default function HomeScreen({ navigation }) {
     const [services, setServices] = useState([]);
-    const user = useSelector(state => state.userInfo.userData);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const user = useSelector(state => state.auth.userData);
     const dispatch = useDispatch();
-
     const formatPriceToVND = (price) => {
         return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
-
-    
-
     const onLogoutPressed = async () => {
-        const result = await dispatch(logout());
-        if (result.success) {
-            setIsLoggedIn(false);
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'StartScreen' }],
-            });
-        } else {
-            console.error(result.error);
-        }
+        await dispatch(logout())
     };
 
     useEffect(() => {
-        setIsLoggedIn(!!user);
-    }, [user]);
-
-
-
-    useEffect(() => {
-
-        if (!isLoggedIn) {
-            return;
-        }
-
         navigation.setOptions({
             headerStyle: {
                 backgroundColor: '#f06292',
@@ -85,7 +60,7 @@ export default function HomeScreen({ navigation }) {
                 );
             },
         });
-    }, [isLoggedIn]);
+    },[]);
 
 
     useEffect(() => {
@@ -104,7 +79,6 @@ export default function HomeScreen({ navigation }) {
 
         return () => unsubscribe();
     }, []);
-
 
     const renderItem = ({ item }) => (
         <TouchableOpacity style={styles.serviceItem} onPress={() => {

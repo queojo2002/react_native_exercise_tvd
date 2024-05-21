@@ -5,17 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/actions/authAction';
 
 export default SettingsScreen = ({ navigation }) => {
-    const user = useSelector(state => state.userInfo.userData);
+    const user = useSelector(state => state.auth.userData);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!user) {
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'StartScreen' }],
-            });
-        }
-    }, [user, navigation]);
+        
+    }, []);
 
 
 
