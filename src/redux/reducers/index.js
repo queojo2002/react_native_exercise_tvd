@@ -1,9 +1,7 @@
-import {combineReducers, } from "redux"
-import userInfoReducer from "./userInfoReducer"
+import { combineReducers, } from "redux";
 import authReducer from "./authReducer";
 
 const reducers = combineReducers({
-    userInfo: userInfoReducer,
     auth: authReducer,
 });
 

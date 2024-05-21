@@ -11,7 +11,7 @@ export default function AddServiceScreen({ navigation }) {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [imageUri, setImageUri] = useState(null);
-    const user = useSelector(state => state.userInfo.userData);
+    const user = useSelector(state => state.auth.userData);
 
 
     useEffect(() => {
